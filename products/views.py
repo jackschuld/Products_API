@@ -19,16 +19,24 @@ def products_list(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def product_detail(request, pk):
+    # Accepts a value from the request’s URL
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'GET':
         serializer = ProductSerializer(product)
-        return Response(serializer.data)
+        # Returns a 200 status code
+        # Responds with the product in the database that has the id that was sent through the URL
+        return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
         serializer = ProductSerializer(product, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        # Returns a 200 status code
+        # Responds with the newly updated product object
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'DELETE':
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
